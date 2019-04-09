@@ -20,6 +20,13 @@ public class SendGridServiceImpl implements EmailService {
 	private final String TEMPLATE_ID = "d-ad31975b12d641429241bf7b48124668"; //"d-c070b3e6ce1943f087d7ec495a981450";
 	private final String API_KEY = "SG.hkLdva4PSdSiieodgZ0eLA.IB0ilzGS24PyYov9X2CGIXXLhFCAImjNCo41nCbnlRo";
 	
+	/**
+	 * Sample Email Template
+	 * Dear {{ RECIVER_NAME }}
+		{{{ EMAIL_BODY }}}
+		Regards
+		{{ SENDER_NAME }}
+	 */
 	
 	public EmailResponseEntity sendTransactMail(EmailEntity email) {		
 		EmailResponseEntity emailResponseEntity = new EmailResponseEntity();
