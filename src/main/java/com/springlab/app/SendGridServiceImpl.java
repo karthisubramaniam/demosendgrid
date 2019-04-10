@@ -1,5 +1,7 @@
 package com.springlab.app;
 
+import java.util.HashMap;
+
 import org.springframework.stereotype.Service;
 
 import com.sendgrid.Content;
@@ -17,9 +19,6 @@ public class SendGridServiceImpl implements EmailService {
 	private final String EMAIL_SUCCESS = "Email has been sent successfully";
 	private final String EMAIL_FAILURE = "Sorry, Unable to send Email. Please try again later.";
 	
-	private final String TEMPLATE_ID = "";
-	private final String API_KEY = "";
-	
 	/**
 	 * Sample Email Template
 	 * Dear {{ RECIVER_NAME }}
@@ -28,7 +27,7 @@ public class SendGridServiceImpl implements EmailService {
 		{{ SENDER_NAME }}
 	 */
 	
-	public EmailResponseEntity sendTransactMail(EmailEntity email) {		
+	public EmailResponseEntity sendTransactMail(EmailEntity email, HashMap<String, String> props) {		
 		EmailResponseEntity emailResponseEntity = new EmailResponseEntity();
 		Mail mail = new Mail();
 		
@@ -46,15 +45,20 @@ public class SendGridServiceImpl implements EmailService {
 		mail.setFrom(from);
 		mail.setSubject(email.getEmailSubject());
 		mail.addPersonalization(personalization);
-		mail.setTemplateId(TEMPLATE_ID);
+		mail.setTemplateId(props.get("prop.sgTemplateId"));
 		
+//		System.out.println("apikey=" + props.get("prop.sgAPIKey") + " tId=" + props.get("prop.sgTemplateId"));
 		try {
-			SendGrid sendGrid = new SendGrid(API_KEY);
+			SendGrid sendGrid = new SendGrid(props.get("prop.sgAPIKey"));
 			Request request = new Request();			
 			request.setEndpoint("mail/send");
 			request.setMethod(Method.POST);
 			request.setBody(mail.build());
 			Response response = sendGrid.api(request);
+			System.out.println(response.getStatusCode());
+			System.out.println(response.getBody());
+			System.out.println(response.getHeaders());
+			
 			emailResponseEntity.setResponseCode(response.getStatusCode());
 			emailResponseEntity.setResponseMsg(EMAIL_SUCCESS);
 			
@@ -67,7 +71,7 @@ public class SendGridServiceImpl implements EmailService {
 		return emailResponseEntity;
 	}
 	
-	public EmailResponseEntity sendNonTransactMail(EmailEntity email) {		
+	public EmailResponseEntity sendNonTransactMail(EmailEntity email, HashMap<String, String> props) {		
 		EmailResponseEntity emailResponseEntity = new EmailResponseEntity();
 		Mail mail = new Mail();
 		
@@ -84,7 +88,7 @@ public class SendGridServiceImpl implements EmailService {
 		mail.addPersonalization(personalization);
 
 		try {
-			SendGrid sendGrid = new SendGrid(API_KEY);
+			SendGrid sendGrid = new SendGrid(props.get("prop.sgAPIKey"));
 			Request request = new Request();
 			request.setEndpoint("mail/send");
 			request.setMethod(Method.POST);
